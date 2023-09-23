@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% block content %}
+    <style>
+        /* Style for the fixed-position overlay */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+            z-index: 9998; /* Ensure it's above everything else */
+        }
+
+        /* Style for the flash message box */
+        .flash-message-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            border: 1px solid #cccccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 9999; /* Ensure it's above everything else */
+        }
+
+        .flash-error {
+            background-color: #d91717;
+        }
+
+        .flash-info {
+            background-color: #ffffff;
+
+        }
+    </style>
+    <div class="flashwrapper">
+        <div class="overlay" id="overlay"></div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div id="flash-message" class="flash-message-box flash-{{ category }}">{{ message }}
+                        <a class="close-button" onclick="closeFlashMessage()">
+                            <button>&times;</button>
+                        </a>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+    <div class="field">
+        <form method="post" id="form">
+            <div class="field">
+                <div id="idDialog" class="modal">
+                    <div class="modal-background" style="width: 100%;">
+                        <div class="modal-content"
+                             style="width: 80%; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);">
+                            <div class="field">
+                                <div class="control">
+                                    <div class="select">
+                                        <label for="option">
+                                            <select name="category">
+                                                <option value="">Category</option>
+                                                {% for opt in options %}
+                                                    <option value="{{ opt }}">{{ opt }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="content"></label><textarea id="content" class="textarea"
+                                                                       name="content"
+                                                                       placeholder="Message content"
+                                                                       rows="5" cols="40"></textarea>
+                            </div>
+                            <input type="hidden" name="privileges" value="public">
+                            <input type="hidden" name="event" value="submit">
+                            <div class="field">
+                                <button id="submit" class="button is-primary" name="submit" type="submit">Submit
+                                </button>
+                            </div>
+                        </div>
+                        <button class="modal-close is-large" aria-label="close"></button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="columns" style=" width: 100%">
+        <div class="column is-1">
+            {% for category in categories %}
+                <br>
+                <br>
+                <div class="field">
+                    <a href="{{ url_for('app.profile') }}?category={{ category }}">{{ category }}</a>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="column is-10">
+            <div class="field">
+                <div class="box has-background-light" style="overflow-y: auto; min-height: 100vh; max-height: 100vh;">
+                    <div class="feed-content">
+                        {% for post in jokes %}
+                            <div class="box is-10">
+                                <article class="media">
+                                    <div class="media-content ">
+                                        <div class="content">
+                                            <div class="tag__custom">
+                                                <p>{{ post.content }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </article>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column is-1">
+            <br>
+            <br>
+            <div class="buttons is-centered">
+                <div class="field">
+                    <button id="save" class="button is-block is-info" name="save"  type="button">
+                        Submit Joke
+                    </button>
+                </div>
+                <div class="field">
+                    <a href="{{ url_for('app.review') }}">
+                        <button class="button is-block is-info" name="save" type="button" >
+                            Review
+                        </button>
+                    </a>
+                </div>
+                <div class="field">
+                    <form method="post" action="{{ url_for('app.profile') }}">
+                        <input type="hidden" name="privileges" value="public">
+                        <input type="hidden" name="event" value="export">
+                        <button class="button is-block is-info" style="width: 100%" type="submit">Export</button>
+                    </form>
+                </div>
+                <div class="field">
+                    <form method="post" action="{{ url_for('app.profile') }}">
+                        <input type="hidden" name="privileges" value="admin">
+                        <input type="hidden" name="event" value="backup">
+                        <button class="button is-block is-info" style="width: 100%" type="submit">Backup</button>
+                    </form>
+                </div>
+            </table>
+        </div>
+    </div>
+    <script>
+
+        const dialog = document.getElementById('idDialog');
+        const openButton = document.getElementById('save');
+        const form = document.getElementById('form');
+        const title = document.getElementById('title');
+        const closeButton = dialog.querySelector('.modal-close');
+        const inputField = document.getElementById('inputField');
+        const submitButton = document.getElementById('submitDraft');
+
+        openButton.addEventListener('click', function () {
+            dialog.classList.add('is-active');
+        });
+
+        submitButton.addEventListener('click', function () {
+            dialog.classList.remove('is-active');
+        });
+
+        closeButton.addEventListener('click', function () {
+            dialog.classList.remove('is-active');
+        });
+    </script>
+    <script>
+        // Show the flash message when the page loads
+        const overlay = document.getElementById('overlay');
+        const flashMessage = document.getElementById('flash-message');
+        if (flashMessage) {
+            overlay.style.display = 'block';
+            flashMessage.style.display = 'block';
+            setTimeout(function () {
+                closeFlashMessage();
+            }, 2000);
+        }
+
+        function closeFlashMessage() {
+            flashMessage.style.display = 'none';
+            overlay.style.display = 'none';
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Jokes</title>
+    <link rel="stylesheet" href="../static/stylesheet/bulma.min.css">
+</head>
+<style>p {
+    word-break: break-all;
+    white-space: break-spaces;
+}
+.column{
+    margin: 5px
+}
+.buttons{
+    display: flex;
+  justify-content: space-around;
+}
+.like-button-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 10px; /* Adjust the margin as needed */
+}
+.like-button{
+    background: #ffffff;
+      border: 1px solid #000000; /* Green */
+}
+
+</style>
+<body>
+<div class="container has-text-centered"
+     style="width: 100%; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);">
+    {% block content %}
+    {% endblock %}
+</div>
+</body>
+
+</html>

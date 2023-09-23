@@ -1,0 +1,28 @@
+version: "2.2"
+# ipv6 is not supported in version 3
+
+services:
+  jokes_deps:
+    scale: 0
+    image: faust.cs.fau.de:5000/jokes-deps
+    build:
+      context: .
+      dockerfile: Dockerfile.deps
+  web:
+    restart: unless-stopped
+    image: faust.cs.fau.de:5000/jokes
+    init: true
+    build: . # build the image from the present Dockerfile
+    volumes:
+        - ./data:/app/instance
+        - /etc/team-num:/etc/team-num
+    ports:
+        - "5000:5000" # this is the port where the service runs (flask)
+
+networks:
+  default:
+    enable_ipv6: true
+    ipam:
+        driver: default
+        config:
+            - subnet: "fd42:d0ce:1234::/64"

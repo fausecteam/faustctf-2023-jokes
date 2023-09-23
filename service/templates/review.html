@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <div class="columns" style="width: 100%">
+        <div class="column is-1">
+            <br><br>
+            <div class="field">
+                <a href="{{ url_for('app.profile') }}">
+                    <button class="button is-block is-info" type="button">Back</button>
+                </a>
+            </div>
+        </div>
+        <div class="column is-10">
+            <div class="field">
+                <div class="box has-background-light" style="overflow-y: auto; min-height: 100vh; max-height: 100vh;">
+                    <div class="feed-content">
+                        {% for joke in review %}
+                            <article class="media box">
+                                <div class="media-content">
+                                    <div class="content" style="position:relative">
+                                        <p style="margin:0">{{ joke.content }}</p>
+                                        <div class="like-button-container">
+                                            <button class="like-button" onclick="toggleLike(this, {{ joke.id }})">&hearts;
+                                            </button>
+                                            <span id="like-count-{{ joke.id }}" style="margin:10px" class="like-count">{{ joke.likes }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column is-1 aligned">
+            <br><br>
+            <div class="field">
+                <h5>Filter Category</h5>
+            </div>
+            <div class="field form-container" style="width: 100%">
+                <form class="has-text-centered" method="post" action="/review">
+                    <div class="control">
+                        <div class="select">
+                            <label>
+                                <select name="filter" onchange="this.form.submit()">
+                                    <option value="">Filter</option>
+                                    {% for opt in options %}
+                                        <option value="{{ opt }}">{{ opt }}</option>
+                                    {% endfor %}
+                                </select>
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="field">
+                <a href={{ url_for('app.review') }}>
+                    <button class="button is-block is-info" style="width: 100%" type="button">Reset</button>
+                </a>
+            </div>
+        </div>
+    </div>
+    <script>
+        function toggleLike(button, joke_id) {
+            fetch('/like-joke', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({joke_id}), // Send data such as the post ID
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if ("newLikeCount" in data){
+                    const likeCountElement = document.getElementById('like-count-' + joke_id);
+                    likeCountElement.textContent = data.newLikeCount;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            updateLikeButton(button);
+        }
+
+        function updateLikeButton(button) {
+            const likeCountSpan = button.nextElementSibling;
+            button.textContent = liked ? 'Liked' : 'Like';
+            likeCountSpan.textContent = likeCount;
+        }
+    </script>
+
+{% endblock %}

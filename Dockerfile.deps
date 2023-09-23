@@ -1,0 +1,7 @@
+# This dockerfile contains all dependencies of the service
+# Therefore no internet access is needed to rebuild the service
+FROM python:alpine
+WORKDIR /app
+
+COPY ./requirements.txt /app/requirements.txt
+RUN pip3 install -r requirements.txt

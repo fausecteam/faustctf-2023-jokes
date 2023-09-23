@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container has-text-centered">
+        <div class="box">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="notification is-danger">
+                        {{ messages[0] }}. Go to <a href="{{ url_for('auth.login') }}">login page</a>.
+                    </div>
+                {% endif %}
+            {% endwith %}
+            <form method="POST" action="/register">
+                <div class="field">
+                    <div class="control">
+                        <label>
+                            <input class="input" type="text" name="name" placeholder="Name" autofocus="">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <div class="control">
+                        <label>
+                            <input class="input" type="password" name="password" placeholder="Password">
+                        </label>
+                    </div>
+                </div>
+                <button class="button is-block is-info is-fullwidth">Sign Up</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
