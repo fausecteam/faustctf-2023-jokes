@@ -1,5 +1,9 @@
-# CI Example for a service using docker-compose
+jokes
+=====
 
-The .gitlab-ci.yml in this repo builds and pushes all possible images (docker-compose.yml is parsed and used to call kaniko).
+This is the source code for the "jokes" service from [FAUST CTF 2023](https://2023.faustctf.net).
 
-In the vulnbox build process, the compose file is used to pull all images and include them in the vm.
+**As it was written for a CTF service, the code is deliberately insecure and contains exploitable bugs. It
+is provided for educational purposes only, do not even think about (re-) using it for anything productive!**
+
+The code is released under the ISC License, see LICENSE.txt for details.
